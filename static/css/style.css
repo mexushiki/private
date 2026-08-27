@@ -1,0 +1,430 @@
+/* ============================================================
+   Design tokens
+   Palette: blush cream bg, soft pink, rose, deep rose accent, mauve ink
+   Type: Caveat (handwritten display) + Quicksand (rounded body/UI)
+   Signature: the flower-bloom-into-popup moment on interface 1
+   ============================================================ */
+:root{
+  --cream:      #FFF6F8;
+  --blush:      #FFE1EA;
+  --pink-soft:  #FFC4D6;
+  --rose:       #FF8FAB;
+  --rose-deep:  #E8577A;
+  --ink:        #6B3F4D;
+  --ink-soft:   #9C6B7C;
+  --white:      #FFFFFF;
+  --shadow:     rgba(232, 87, 122, 0.18);
+
+  --font-display: 'Caveat', cursive;
+  --font-body: 'Quicksand', sans-serif;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+
+html{ scroll-behavior: smooth; }
+
+body{
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+.eyebrow{
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--rose-deep);
+  margin-bottom: 0.75rem;
+}
+
+.section-title{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1;
+  color: var(--rose-deep);
+}
+
+/* ============================================================
+   Page / section scaffold
+   Interface 1 is a fixed full-screen "stage"; 2 and 3 flow in
+   normal scroll document order beneath it.
+   ============================================================ */
+.page{ position: relative; width: 100%; }
+
+#page-flower{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 30%, var(--blush) 0%, var(--cream) 65%);
+  position: relative;
+  overflow: hidden;
+}
+
+.soft-glow{
+  position: absolute;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--pink-soft) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  opacity: 0.6;
+  filter: blur(10px);
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+@keyframes pulse-glow{
+  0%,100%{ transform: translate(-50%,-50%) scale(1); }
+  50%{ transform: translate(-50%,-50%) scale(1.12); }
+}
+
+.page1-title{
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  color: var(--ink);
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- The flower (signature interaction) ---------- */
+#flower-btn{
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 220px;
+  height: 220px;
+  position: relative;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#flower-svg{ width: 100%; height: 100%; overflow: visible; }
+
+#stem-group{ transform-origin: 100px 118px; animation: sway 3.5s ease-in-out infinite; }
+@keyframes sway{
+  0%,100%{ transform: rotate(-2deg); }
+  50%{ transform: rotate(2deg); }
+}
+.leaf{ fill: #8FBF8A; }
+#stem{ fill: none; stroke: #8FBF8A; stroke-width: 6; stroke-linecap: round; }
+
+#petals{ transform-origin: 100px 100px; }
+.petal{
+  fill: var(--pink-soft);
+  transform-origin: 100px 100px;
+  transform: scale(0.32);
+  transition: transform 0.7s cubic-bezier(.34,1.56,.64,1), fill 0.7s ease;
+}
+.petal.p1{ transition-delay: 0s; }
+.petal.p2{ transition-delay: 0.05s; }
+.petal.p3{ transition-delay: 0.1s; }
+.petal.p4{ transition-delay: 0.15s; }
+.petal.p5{ transition-delay: 0.02s; }
+.petal.p6{ transition-delay: 0.12s; }
+.petal.p7{ transition-delay: 0.18s; }
+.petal.p8{ transition-delay: 0.08s; }
+
+#flower-center{
+  fill: #FFD766;
+  transform-origin: 100px 100px;
+  transform: scale(0.4);
+  transition: transform 0.7s cubic-bezier(.34,1.56,.64,1) 0.2s;
+}
+
+#flower-btn:not(.bloomed):hover .petal{ transform: scale(0.38); }
+
+#flower-btn.bloomed #petals .petal{ transform: scale(1); fill: var(--rose); }
+#flower-btn.bloomed #flower-center{ transform: scale(1); }
+#flower-btn.bloomed #stem-group{ animation-duration: 2.2s; }
+
+#flower-btn.picked{
+  animation: flower-lift 0.6s ease forwards;
+}
+@keyframes flower-lift{
+  to{ transform: translateY(-14px); }
+}
+
+.hint{
+  margin-top: 1.75rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  animation: bob 1.6s ease-in-out infinite;
+  position: relative; z-index: 2;
+}
+@keyframes bob{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(6px); }
+}
+
+/* ---------- Popup surprise ---------- */
+.popup-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(107, 63, 77, 0.35);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 1.5rem;
+}
+.popup-overlay.show{ opacity: 1; pointer-events: auto; }
+
+.popup-card{
+  background: var(--white);
+  border-radius: 28px;
+  padding: 2.75rem 2.25rem 2.25rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 60px var(--shadow);
+  position: relative;
+  transform: scale(0.85) translateY(10px);
+  transition: transform 0.45s cubic-bezier(.34,1.56,.64,1);
+}
+.popup-overlay.show .popup-card{ transform: scale(1) translateY(0); }
+
+.popup-close{
+  position: absolute;
+  top: 14px; right: 16px;
+  background: var(--blush);
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.popup-hearts{ font-size: 2.2rem; margin-bottom: 0.5rem; }
+
+#popup-title{
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--rose-deep);
+  margin-bottom: 0.85rem;
+}
+#popup-message{
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--ink);
+  margin-bottom: 1.75rem;
+}
+
+.cute-btn{
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+  border: none;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cute-btn:hover{ transform: translateY(-3px); box-shadow: 0 14px 28px var(--shadow); }
+.cute-btn:active{ transform: translateY(0); }
+
+.cute-btn.ghost{
+  background: transparent;
+  color: var(--rose-deep);
+  border: 2px solid var(--pink-soft);
+  box-shadow: none;
+}
+.cute-btn.ghost:hover{ background: var(--blush); }
+
+/* ============================================================
+   Interface 2 — gallery
+   ============================================================ */
+#page-gallery{
+  min-height: 100vh;
+  padding: 5rem 6vw 3rem;
+  background: var(--white);
+}
+
+.gallery-header{ text-align: center; margin-bottom: 3.5rem; }
+
+.gallery-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2.4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.polaroid{
+  background: var(--white);
+  border: 1px solid var(--blush);
+  padding: 0.9rem 0.9rem 1.4rem;
+  border-radius: 6px;
+  box-shadow: 0 14px 30px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.polaroid:hover{ transform: translateY(-8px) rotate(0deg) scale(1.02); box-shadow: 0 20px 40px var(--shadow); z-index: 1; }
+.polaroid img{ width: 100%; display: block; border-radius: 3px; aspect-ratio: 1/1; object-fit: cover; }
+.polaroid figcaption{
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--ink);
+  text-align: center;
+  margin-top: 0.9rem;
+}
+.rotate-0{ transform: rotate(-2.5deg); }
+.rotate-1{ transform: rotate(2deg); }
+.rotate-2{ transform: rotate(-1.5deg); }
+.rotate-3{ transform: rotate(2.5deg); }
+
+.scroll-cue{
+  text-align: center;
+  margin-top: 4.5rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+.scroll-arrow{
+  font-size: 1.4rem;
+  color: var(--rose);
+  animation: bob 1.6s ease-in-out infinite;
+  margin-top: 0.3rem;
+}
+
+#reveal-zone{
+  margin-top: 5rem;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+#reveal-zone.revealed{ opacity: 1; transform: translateY(0); }
+
+.found-text{
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--rose-deep);
+  margin-bottom: 1.4rem;
+}
+
+/* ============================================================
+   Interface 3 — speech
+   ============================================================ */
+#page-speech{
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--blush) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 6vw;
+  position: relative;
+  overflow: hidden;
+}
+
+.speech-wrap{
+  max-width: 620px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.speech-title{ margin-bottom: 2rem; }
+
+.speech-text{
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-wrap;
+  min-height: 3em;
+  text-align: left;
+}
+
+.speech-text .cursor{
+  display: inline-block;
+  width: 2px;
+  background: var(--rose-deep);
+  margin-left: 2px;
+  animation: blink 0.9s steps(1) infinite;
+}
+@keyframes blink{ 50%{ opacity: 0; } }
+
+.signature{
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--rose-deep);
+  margin-top: 2rem;
+  text-align: right;
+}
+
+#back-to-start-btn{ margin-top: 3rem; }
+
+.floating-hearts{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.floating-hearts span{
+  position: absolute;
+  bottom: -10%;
+  font-size: 1.4rem;
+  color: var(--rose);
+  opacity: 0.55;
+  animation: float-up linear infinite;
+}
+@keyframes float-up{
+  to{ transform: translateY(-115vh) rotate(20deg); opacity: 0; }
+}
+
+/* ============================================================
+   Falling petal confetti layer (triggered on bloom)
+   ============================================================ */
+#petal-layer{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+}
+.confetti-petal{
+  position: absolute;
+  top: -5%;
+  font-size: 1.3rem;
+  animation: petal-fall linear forwards;
+}
+@keyframes petal-fall{
+  to{ transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 480px){
+  .gallery-grid{ grid-template-columns: repeat(2, 1fr); gap: 1.4rem 1rem; }
+  #page-gallery{ padding: 4rem 5vw 2rem; }
+  .polaroid figcaption{ font-size: 1.05rem; }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.2s !important; }
+  html{ scroll-behavior: auto; }
+}
+
+/* Keyboard focus visibility */
+button:focus-visible{
+  outline: 3px solid var(--rose-deep);
+  outline-offset: 3px;
+}
