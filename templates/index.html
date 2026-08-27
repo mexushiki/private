@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ cfg.anniversary_text }} 🌸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div id="petal-layer"></div>
+
+<!-- ================= INTERFACE 1 : THE FLOWER ================= -->
+<section id="page-flower" class="page active">
+  <div class="soft-glow"></div>
+  <p class="eyebrow">for {{ cfg.her_name }}</p>
+  <h1 class="page1-title">tap the flower<br>to see what's inside</h1>
+
+  <button id="flower-btn" aria-label="Click the flower">
+    <svg id="flower-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <g id="petals">
+        <ellipse class="petal p1" cx="100" cy="60" rx="22" ry="34"/>
+        <ellipse class="petal p2" cx="140" cy="100" rx="22" ry="34"/>
+        <ellipse class="petal p3" cx="100" cy="140" rx="22" ry="34"/>
+        <ellipse class="petal p4" cx="60" cy="100" rx="22" ry="34"/>
+        <ellipse class="petal p5" cx="128" cy="72" rx="20" ry="30"/>
+        <ellipse class="petal p6" cx="128" cy="128" rx="20" ry="30"/>
+        <ellipse class="petal p7" cx="72" cy="128" rx="20" ry="30"/>
+        <ellipse class="petal p8" cx="72" cy="72" rx="20" ry="30"/>
+      </g>
+      <circle id="flower-center" cx="100" cy="100" r="20"/>
+      <g id="stem-group">
+        <path id="stem" d="M100 118 C 96 150, 104 170, 100 195" />
+        <path class="leaf leaf-left" d="M100 160 C 78 158, 66 172, 60 190 C 84 190, 98 178, 100 160 Z"/>
+        <path class="leaf leaf-right" d="M100 175 C 122 173, 134 187, 140 205 C 116 205, 102 193, 100 175 Z"/>
+      </g>
+    </svg>
+  </button>
+
+  <p class="hint">tap 🌸</p>
+</section>
+
+<!-- Popup surprise -->
+<div id="popup-overlay" class="popup-overlay">
+  <div class="popup-card">
+    <button class="popup-close" id="popup-close" aria-label="Close">×</button>
+    <div class="popup-hearts">💗</div>
+    <h2 id="popup-title"></h2>
+    <p id="popup-message"></p>
+    <button id="to-gallery-btn" class="cute-btn">Next surprise →</button>
+  </div>
+</div>
+
+<!-- ================= INTERFACE 2 : PHOTO GALLERY ================= -->
+<section id="page-gallery" class="page">
+  <div class="gallery-header">
+    <p class="eyebrow">our memories</p>
+    <h1 class="section-title">two months,<br>a hundred little moments</h1>
+  </div>
+
+  <div class="gallery-grid">
+    {% for photo in cfg.photos %}
+    <figure class="polaroid rotate-{{ loop.index0 % 4 }}">
+      <img src="{{ url_for('static', filename='images/' ~ photo.src) }}" alt="{{ photo.caption }}">
+      <figcaption>{{ photo.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+
+  <div class="scroll-cue">
+    <span>keep scrolling…</span>
+    <div class="scroll-arrow">↓</div>
+  </div>
+
+  <div id="reveal-zone">
+    <p class="found-text">you found it 🩷</p>
+    <button id="to-speech-btn" class="cute-btn">one more thing…</button>
+  </div>
+</section>
+
+<!-- ================= INTERFACE 3 : THE SPEECH ================= -->
+<section id="page-speech" class="page">
+  <div class="speech-wrap">
+    <p class="eyebrow">a little something</p>
+    <h1 class="section-title speech-title">dear {{ cfg.her_name }},</h1>
+    <div id="speech-text" class="speech-text" data-full="{{ cfg.speech }}"></div>
+    <p class="signature">— {{ cfg.your_name }}</p>
+    <button id="back-to-start-btn" class="cute-btn ghost">back to the start ↺</button>
+  </div>
+  <div class="floating-hearts" id="floating-hearts"></div>
+</section>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
