@@ -24,7 +24,7 @@ CONFIG = {
         {"src": "photo6.jpg", "caption": "Us eating dinner together"},
     ],
     "speech": (
-        "Sayang if you're reading this, it means you scrolled all the way here — "
+        "Sayang if you're reading this, it means you scrolled all the way here "
         "just like how you've stuck with me through everything these past two "
         "months.\n\n"
         "I don't think I've ever smiled this much over text messages, or "
